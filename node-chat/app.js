@@ -1,4 +1,5 @@
 // app.js: updated
+
 const axios = require('axios');
 const prompt = require('prompt');
 const ora = require('ora');
@@ -7,18 +8,14 @@ const util = require('util');
 const blessed = require('neo-blessed');
 
 function fetchToken(username) {
-  return axios.post('http://localhost:5500/join', {
-    username,
-  });
+  return axios.post('http://localhost:5500/join', { username });
 }
 
 async function main() {
   const spinner = ora();
   prompt.start();
   prompt.message = '';
-
   const get = util.promisify(prompt.get);
-
   const usernameSchema = [
     {
       description: 'Enter your username',
@@ -29,18 +26,15 @@ async function main() {
       required: true,
     },
   ];
-
   const { username } = await get(usernameSchema);
+
   try {
     spinner.start('Fetching authentication token...');
     const response = await fetchToken(username);
-    spinner.succeed(`Token fetched successfully!`);
-
+    spinner.succeed('Token fetched successfully!');
     const { token } = response.data;
     const apiKey = response.data.api_key;
-
     const chatClient = new StreamChat(apiKey);
-
     spinner.start('Authenticating user...');
     await chatClient.setUser(
       {
@@ -50,13 +44,12 @@ async function main() {
       token
     );
     spinner.succeed(`Authenticated successfully as ${username}!`);
-
     spinner.start('Connecting to the General channel...');
     const channel = chatClient.channel('team', 'general');
     await channel.watch();
     spinner.succeed('Connection successful!');
-    process.stdin.removeAllListeners('data');
 
+    process.stdin.removeAllListeners('data');
     const screen = blessed.screen({
       smartCSR: true,
       title: 'Stream Chat Demo',
@@ -77,7 +70,6 @@ async function main() {
       items: [],
     });
 
-    // Append our box to the screen.
     var input = blessed.textarea({
       bottom: 0,
       height: '10%',
@@ -89,7 +81,6 @@ async function main() {
       style: {
         fg: '#787878',
         bg: '#454545',
-
         focus: {
           fg: '#f6f6f6',
           bg: '#353535',
@@ -97,7 +88,7 @@ async function main() {
       },
     });
 
-    input.key('enter', async function() {
+    input.key('enter', async function () {
       var message = this.getValue();
       try {
         await channel.sendMessage({
@@ -111,21 +102,26 @@ async function main() {
       }
     });
 
-    // Append our box to the screen.
-    screen.key(['escape', 'q', 'C-c'], function() {
+    screen.key(['escape', 'q', 'C-c'], function () {
       return process.exit(0);
     });
 
     screen.append(messageList);
     screen.append(input);
     input.focus();
-
     screen.render();
 
     channel.on('message.new', async event => {
-      messageList.addItem(`${event.user.id}: ${event.message.text}`);
+      const messageText = `${event.user.id}: ${event.message.text}`;
+      const messageIndex = messageList.addItem(messageText);
       messageList.scrollTo(100);
       screen.render();
+
+      // Set a timeout to remove the message after a certain duration
+      setTimeout(() => {
+        messageList.removeItem(messageIndex);
+        screen.render();
+      }, 5000); // Message will disappear after 5000ms (5 seconds)
     });
   } catch (err) {
     spinner.fail();
@@ -133,4 +129,5 @@ async function main() {
     process.exit(1);
   }
 }
+
 main();
