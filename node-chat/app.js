@@ -1,5 +1,3 @@
-// app.js: updated
-
 const axios = require('axios');
 const prompt = require('prompt');
 const ora = require('ora');
@@ -89,11 +87,18 @@ async function main() {
     });
 
     input.key('enter', async function () {
-      var message = this.getValue();
+      var message = this.getValue().trim();
+      let timeout = 5000; // Default timeout
+
+      // Check if the message contains a timeout command
+      if (message.startsWith('/timeout=')) {
+        const parts = message.split(' ');
+        timeout = parseInt(parts[0].split('=')[1], 10);
+        message = parts.slice(1).join(' ');
+      }
+
       try {
-        await channel.sendMessage({
-          text: message,
-        });
+        await channel.sendMessage({ text: message, timeout });
       } catch (err) {
         // error handling
       } finally {
@@ -112,16 +117,17 @@ async function main() {
     screen.render();
 
     channel.on('message.new', async event => {
-      const messageText = `${event.user.id}: ${event.message.text}`;
+      const { text, timeout = 5000 } = event.message;
+      const messageText = `${event.user.id}: ${text}`;
       const messageIndex = messageList.addItem(messageText);
       messageList.scrollTo(100);
       screen.render();
 
-      // Set a timeout to remove the message after a certain duration
+      // Set a timeout to remove the message after the specified duration
       setTimeout(() => {
         messageList.removeItem(messageIndex);
         screen.render();
-      }, 5000); // Message will disappear after 5000ms (5 seconds)
+      }, timeout);
     });
   } catch (err) {
     spinner.fail();

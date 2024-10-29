@@ -1,18 +1,17 @@
 // server.js
-require('dotenv').config();
 
+require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const { StreamChat } = require('stream-chat');
-
 const app = express();
 
 app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// initialize Stream Chat SDK
+// Initialize Stream Chat SDK
 const serverSideClient = new StreamChat(
   process.env.STREAM_API_KEY,
   process.env.STREAM_APP_SECRET
@@ -21,12 +20,10 @@ const serverSideClient = new StreamChat(
 app.post('/join', async (req, res) => {
   const { username } = req.body;
   const token = serverSideClient.createToken(username);
+
   try {
     await serverSideClient.updateUser(
-      {
-        id: username,
-        name: username,
-      },
+      { id: username, name: username },
       token
     );
 
@@ -39,9 +36,11 @@ app.post('/join', async (req, res) => {
     await channel.create();
     await channel.addMembers([username, 'admin']);
 
-    res
-      .status(200)
-      .json({ user: { username }, token, api_key: process.env.STREAM_API_KEY });
+    res.status(200).json({
+      user: { username },
+      token,
+      api_key: process.env.STREAM_API_KEY,
+    });
   } catch (err) {
     console.error(err);
     res.status(500);
