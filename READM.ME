@@ -1,1 +1,21 @@
 Project which will include web communication tool.
+
+Before running anything make sure that:
+* Docker is installed
+* Node is installed
+
+Rebuild project:
+docker-compose down
+docker-compose build
+docker-compose up
+
+
+client % http-server -p 3000
+server -> docker
+
+knex: https://knexjs.org/
+dockerfile: https://docs.docker.com/reference/dockerfile/
+nodejs in docker: https://www.digitalocean.com/community/tutorials/how-to-build-a-node-js-application-with-docker#step-4-using-a-repository-to-work-with-images
+docker docs: https://docs.docker.com/compose/gettingstarted/
+node js maria db: https://github.com/mariadb-developers/nodejs-quickstart/tree/main?tab=readme-ov-file
+maria db docker: https://hub.docker.com/_/mariadb

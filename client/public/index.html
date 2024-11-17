@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dissapearing messages</title>
+  <link rel="stylesheet" href="/css/styles.css" />
+</head>
+<body>
+  <div id="login-page">
+    <h1>Stream Chat</h1>
+    <h2>Unfortunatelly the dissapearing of the messages is scheduled for the Q2</h2>
+    <form id="login-form">
+      <input type="text" id="username" placeholder="Enter your username" required />
+      <button type="submit">Login</button>
+    </form>
+  </div>
+
+  <div id="chat-page" style="display: none;">
+    <h1>General Chat</h1>
+    <div id="messages"></div>
+    <div id="message-input">
+      <input type="text" id="chat-message" placeholder="Type a message..." />
+      <button id="send-message">Send</button>
+    </div>
+  </div>
+
+  <script src="/js/app.js"></script>
+  <script src="https://cdn.socket.io/4.5.0/socket.io.min.js"></script>
+</body>
+</html>
