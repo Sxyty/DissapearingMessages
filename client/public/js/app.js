@@ -76,7 +76,9 @@ document.addEventListener('DOMContentLoaded', () => {
     messageDiv.style.borderRadius = '5px';
     messageDiv.style.marginBottom = '5px';
 
-    messageDiv.textContent = `${user}: ${text}`;
+    const userLabel = user === username ? `${user} (you)` : user;
+
+    messageDiv.textContent = `${userLabel}: ${text}`;
     messagesDiv.appendChild(messageDiv);
     messagesDiv.scrollTop = messagesDiv.scrollHeight;
   }
